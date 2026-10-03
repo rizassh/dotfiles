@@ -1,0 +1,12 @@
+[Unit]
+Description=Disable multiple ACPI wakeup sources for B550 Stability
+Before=sleep.target
+
+[Service]
+Type=oneshot
+# Disabling the major PCIe and Chipset bridges known to loop on AM4
+ExecStart=/bin/sh -c 'for dev in GPP0 GPP8 GP12 GP13 SWUS SWDS PTXH PT22 PT28 XHC0; do grep -q "$dev.*enabled" /proc/acpi/wakeup && echo $dev > /proc/acpi/wakeup; done'
+RemainAfterExit=yes
+
+[Install]
+WantedBy=sleep.target multi-user.target
